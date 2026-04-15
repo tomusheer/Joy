@@ -71,6 +71,3 @@ if st.button("Generate recommendations", type="primary"):
                                     )
                         else:
                             st.write("No tiles.")
-
-            with st.expander("Raw JSON"):
-                st.json(result)
