@@ -45,6 +45,7 @@ Core rules:
 - Each group should contain 4 to 6 tiles
 - Do not repeat the same tile across groups
 
+
 Safe append-friendly label types:
 - Brand
 - Product Family
@@ -64,6 +65,7 @@ Safe append-friendly label types:
 - Occasion
 - Fit
 - Use Case
+
 
 Use caution with these:
 - Need

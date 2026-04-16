@@ -1,19 +1,18 @@
 import os
-from openai import OpenAI
 from dotenv import load_dotenv
+from openai import OpenAI
 
 load_dotenv()
 
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),
-    base_url=os.getenv("OPENAI_BASE_URL"),
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise ValueError("OPENAI_API_KEY is missing from .env")
+
+client = OpenAI(api_key=api_key)
+
+response = client.responses.create(
+    model="gpt-5.2",
+    input="Reply with exactly: OPENAI_OK"
 )
 
-try:
-    r = client.chat.completions.create(
-        model=os.getenv("OPENAI_MODEL", "gpt-4o"),
-        messages=[{"role": "user", "content": "Hello"}],
-    )
-    print(r.choices[0].message.content)
-except Exception as e:
-    print(type(e).__name__, str(e))
+print(response.output_text)
