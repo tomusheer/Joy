@@ -53,7 +53,7 @@ class LLMClient:
                     self.internal_base,
                     self.internal_model,
                     prompt,
-                    timeout_seconds=8,
+                    timeout_seconds=2,
                 )
                 result["_provider"] = "internal"
                 return result
