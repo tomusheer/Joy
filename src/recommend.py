@@ -45,7 +45,6 @@ Core rules:
 - Each group should contain 4 to 6 tiles
 - Do not repeat the same tile across groups
 
-
 Safe append-friendly label types:
 - Brand
 - Product Family
@@ -65,7 +64,6 @@ Safe append-friendly label types:
 - Occasion
 - Fit
 - Use Case
-
 
 Use caution with these:
 - Need
@@ -114,42 +112,23 @@ Output quality rules:
 - Strong query-expansion labels are better than perfect taxonomy logic
 - Think about what would retrieve good results if appended to the original query
 
-Return JSON only in this structure:
+Return ONLY one valid JSON object.
+Do not include markdown fences.
+Do not include explanation text.
+Ensure all keys and strings use double quotes.
+
+Use this structure:
 {{
   "query": "{query}",
   "query_type": "generic|brand|brand_category|feature|specific",
-  "notes": [
-    "Brand grouping hidden because this is a brand query"
-  ],
+  "notes": [],
   "groups": [
     {{
       "header": "Stage",
       "tiles": ["Stage 1", "Stage 2", "Stage 3", "From Birth"]
-    }},
-    {{
-      "header": "Type",
-      "tiles": ["Infant Formula", "Follow On", "Toddler Milk", "Organic"]
-    }},
-    {{
-      "header": "Series",
-      "tiles": ["Profutura", "Advanced", "Organic", "Pepti"]
-    }},
-    {{
-      "header": "Pack Size",
-      "tiles": ["800g", "2x800g", "6 Pack", "900g"]
     }}
   ]
 }}
-
-Header guidance:
-- Use concise headers like Brand, Type, Series, Stage, Pack Size, Compatibility,
-  Gender, Fit, Style, Flavor, Format, Material, Occasion
-- Avoid weak headers like Other, More, Benefit unless clearly justified
-
-Final instruction:
-Before returning each tile, ask:
-"If this label is appended to the original query, is it likely to improve retrieval on an e-commerce site?"
-If no, do not include it.
 """
 
 
@@ -157,6 +136,18 @@ def get_recommendations(query: str):
     client = LLMClient()
     prompt = build_prompt(query)
     result = client.generate_json(prompt)
+
+    if not isinstance(result, dict):
+        return {
+            "error": "Invalid response format",
+            "query": query,
+            "notes": [],
+            "groups": [],
+        }
+
+    result.setdefault("query", query)
+    result.setdefault("notes", [])
+    result.setdefault("groups", [])
 
     if "query_type" in result:
         result["query_type_label"] = QUERY_TYPE_LABELS.get(
